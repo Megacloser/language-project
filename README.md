@@ -2,6 +2,8 @@
 
 A single-file, self-contained web app for building a personal vocabulary and practicing it with spaced repetition — plus an AI-generated reading module to pull new words from real context.
 
+> **Note:** currently the app only supports the Russian → English learning direction (English vocabulary, Russian translations/UI). Other language pairs are not yet supported.
+
 ## Features
 
 **Dictionary**
