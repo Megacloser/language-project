@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Картотека слов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#26241f;
+    --ink-soft:#4a473e;
+    --paper:#ece5d3;
+    --paper-2:#e2d9c2;
+    --card:#f6f1e4;
+    --navy:#2c3a54;
+    --navy-2:#3d4f6e;
+    --mustard:#c69214;
+    --brick:#a8452d;
+    --sage:#5e7a56;
+    --line:#b9ac8b;
+    --line-soft:#d8cfb4;
+    --radius:3px;
+    --shadow-card: 0 1px 0 var(--line), 3px 3px 0 rgba(38,36,31,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.25), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .catnum{ font-family:'IBM Plex Mono', monospace; }
+  h1,h2,h3,.display{ font-family:'Fraunces', serif; }
+  button{ font-family:inherit; cursor:pointer; }
+  input, textarea, select{ font-family:inherit; }
+  ::selection{ background:var(--mustard); color:var(--ink); }
+  :focus-visible{ outline:2px solid var(--navy); outline-offset:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; transition-duration:0.01ms !important; }
+  }
+
+  /* ---------- shell ---------- */
+  .shell{ max-width:980px; margin:0 auto; padding:0 20px 60px; }
+  header.top{
+    background: var(--navy);
+    color: #f1ead6;
+    padding: 22px 20px 0;
+    margin-bottom: 0;
+  }
+  .top-inner{ max-width:980px; margin:0 auto; }
+  .brand{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+  .brand h1{ font-size:26px; margin:0; font-weight:700; letter-spacing:0.2px; }
+  .brand .sub{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; opacity:0.65; }
+  .tabs{ display:flex; gap:6px; margin-top:18px; overflow-x:auto; }
+  .tab{
+    background: rgba(241,234,214,0.08);
+    border: 1px solid rgba(241,234,214,0.25);
+    border-bottom:none;
+    color:#f1ead6;
+    padding:9px 16px 10px;
+    border-radius: 6px 6px 0 0;
+    font-size:13px;
+    font-weight:500;
+    white-space:nowrap;
+    opacity:0.75;
+  }
+  .tab.active{
+    background: var(--paper);
+    color: var(--ink);
+    opacity:1;
+    border-color:var(--paper);
+    font-weight:600;
+  }
+  main{ background:var(--paper); padding-top:22px; min-height:60vh; }
+
+  /* ---------- generic ---------- */
+  .row{ display:flex; align-items:center; gap:10px; }
+  .between{ justify-content:space-between; }
+  .wrap{ flex-wrap:wrap; }
+  .muted{ color:var(--ink-soft); }
+  .small{ font-size:12.5px; }
+  .btn{
+    border-radius:2px; border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+    padding:9px 16px; font-size:13.5px; font-weight:500; transition:transform .08s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); }
+  .btn.secondary{ background:transparent; color:var(--ink); border-color:var(--line); }
+  .btn.navy{ background:var(--navy); border-color:var(--navy); color:#f1ead6; }
+  .btn.brick{ background:var(--brick); border-color:var(--brick); color:#fbe9e2; }
+  .btn.sage{ background:var(--sage); border-color:var(--sage); color:#eef3ea; }
+  .btn.mustard{ background:var(--mustard); border-color:var(--mustard); color:#2b2100; }
+  .btn.ghost{ background:transparent; border-color:transparent; color:var(--ink-soft); padding:6px 8px; }
+  .btn.ghost:hover{ color:var(--ink); }
+  .btn:disabled{ opacity:0.4; cursor:not-allowed; transform:none; }
+  .pillbtn{ border-radius:100px; }
+
+  .field{ display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+  .field label{ font-size:12px; text-transform:uppercase; letter-spacing:0.6px; color:var(--ink-soft); font-weight:600; }
+  .field input[type=text], .field textarea, .field select{
+    border:1px solid var(--line); background:#fffdf6; border-radius:2px; padding:9px 11px; font-size:14.5px; color:var(--ink);
+  }
+  .field textarea{ resize:vertical; min-height:52px; }
+  .field input:focus, .field textarea:focus, .field select:focus{ border-color:var(--navy); }
+
+  /* ---------- section headers ---------- */
+  .section-head{ display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:16px; gap:12px; flex-wrap:wrap; }
+  .section-head h2{ font-size:22px; margin:0 0 2px; }
+  .count-badge{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-soft); }
+
+  /* ---------- category chips ---------- */
+  .cat-rail{ display:flex; gap:8px; overflow-x:auto; padding-bottom:14px; margin-bottom:6px; }
+  .cat-chip{
+    font-size:12.5px; padding:7px 13px; border-radius:100px; white-space:nowrap;
+    border:1px solid var(--line); background:var(--card); color:var(--ink-soft); font-weight:500;
+    display:flex; align-items:center; gap:7px;
+  }
+  .cat-chip .dot{ width:8px; height:8px; border-radius:50%; flex:none; }
+  .cat-chip.active{ border-color:var(--ink); color:var(--ink); background:#fffdf6; font-weight:600; }
+
+  /* ---------- word cards ---------- */
+  .card-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(240px,1fr)); gap:14px; }
+  .wcard{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow-card); padding:16px 16px 14px; position:relative;
+  }
+  .wcard .top-row{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+  .wcard .call{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-soft); letter-spacing:0.5px; }
+  .wcard .cat-tab{ font-size:10px; padding:3px 8px; border-radius:100px; color:#fff; font-weight:600; letter-spacing:0.3px; }
+  .wcard .term{ font-size:19px; font-weight:600; margin:2px 0 1px; }
+  .wcard .translation{ font-style:italic; color:var(--ink-soft); font-size:14.5px; margin-bottom:8px; }
+  .wcard .rule{ border-top:1px dashed var(--line); margin:8px 0; }
+  .wcard .example{ font-size:12.5px; color:var(--ink-soft); line-height:1.45; }
+  .wcard .bottom-row{ display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
+  .dots{ display:flex; gap:3px; }
+  .dots span{ width:7px; height:7px; border-radius:50%; background:var(--line-soft); }
+  .dots span.filled{ background:var(--navy); }
+  .dots span.mastered{ background:var(--mustard); }
+  .due-badge{ font-size:10px; font-weight:700; letter-spacing:0.4px; text-transform:uppercase; color:var(--brick); }
+  .wcard .actions{ position:absolute; top:12px; right:12px; display:flex; gap:2px; opacity:0; transition:opacity .1s; }
+  .wcard:hover .actions{ opacity:1; }
+  .wcard .actions button{ background:none; border:none; font-size:13px; color:var(--ink-soft); padding:3px 5px; }
+  .wcard .actions button:hover{ color:var(--ink); }
+
+  .empty{
+    border:1px dashed var(--line); border-radius:var(--radius); padding:36px 24px; text-align:center;
+    color:var(--ink-soft); background:rgba(255,253,246,0.4);
+  }
+  .empty .display{ font-size:18px; color:var(--ink); margin-bottom:6px; }
+
+  /* ---------- modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,18,12,0.45); display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:50;
+  }
+  .modal{
+    background:var(--card); border-radius:var(--radius); border:1px solid var(--line); max-width:460px; width:100%;
+    padding:24px; max-height:88vh; overflow-y:auto; box-shadow:0 10px 40px rgba(0,0,0,0.25);
+  }
+  .modal h3{ margin:0 0 16px; font-size:20px; }
+
+  /* ---------- study menu ---------- */
+  .due-banner{
+    background:var(--navy); color:#f1ead6; border-radius:var(--radius); padding:22px 24px; margin-bottom:24px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .due-banner .n{ font-family:'Fraunces', serif; font-size:34px; font-weight:700; }
+  .due-banner .lbl{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; opacity:0.7; }
+  .mode-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:14px; margin-top:8px; }
+  .mode-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px;
+    box-shadow:var(--shadow-card); text-align:left;
+  }
+  .mode-card .ico{ font-size:20px; margin-bottom:8px; }
+  .mode-card h4{ margin:0 0 4px; font-size:15.5px; }
+  .mode-card p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.4; }
+
+  /* ---------- exercise ---------- */
+  .exercise-wrap{ max-width:560px; margin:0 auto; }
+  .progress-bar{ height:4px; background:var(--line-soft); border-radius:2px; overflow:hidden; margin-bottom:22px; }
+  .progress-bar .fill{ height:100%; background:var(--navy); transition:width .25s ease; }
+  .prog-label{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft); margin-bottom:6px; display:flex; justify-content:space-between; }
+
+  .flash-scene{ perspective:1200px; margin-bottom:20px; }
+  .flash-card{
+    position:relative; min-height:230px; border-radius:var(--radius); cursor:pointer;
+    transform-style:preserve-3d; transition:transform .5s cubic-bezier(.4,.2,.2,1);
+  }
+  .flash-card.flipped{ transform:rotateY(180deg); }
+  .face{
+    position:absolute; inset:0; backface-visibility:hidden; border-radius:var(--radius);
+    border:1px solid var(--line); background:var(--card); box-shadow:var(--shadow-card);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; padding:28px; text-align:center;
+  }
+  .face.back{ transform:rotateY(180deg); background:#fffdf6; }
+  .face .cat-tag{ position:absolute; top:14px; left:14px; font-size:10px; padding:3px 8px; border-radius:100px; color:#fff; font-weight:600; }
+  .face .word{ font-size:28px; font-weight:600; }
+  .face .hint{ margin-top:10px; font-size:12px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; }
+  .face .trans{ font-size:22px; font-weight:600; color:var(--navy); }
+  .face .ex{ margin-top:12px; font-size:13px; font-style:italic; color:var(--ink-soft); max-width:340px; }
+  .face .notes{ margin-top:8px; font-size:12px; color:var(--ink-soft); }
+
+  .answer-row{ display:flex; gap:10px; justify-content:center; }
+  .answer-row .btn{ flex:1; padding:13px; font-size:14px; }
+
+  .quiz-term{ text-align:center; margin-bottom:22px; }
+  .quiz-term .word{ font-size:26px; font-weight:600; }
+  .quiz-options{ display:grid; gap:10px; }
+  .opt-btn{
+    text-align:left; padding:13px 16px; border-radius:2px; border:1px solid var(--line); background:var(--card);
+    font-size:14.5px; color:var(--ink);
+  }
+  .opt-btn:hover:not(:disabled){ border-color:var(--navy); }
+  .opt-btn.correct{ background:var(--sage); border-color:var(--sage); color:#eef3ea; }
+  .opt-btn.wrong{ background:var(--brick); border-color:var(--brick); color:#fbe9e2; }
+  .opt-btn:disabled{ cursor:default; }
+
+  .type-input{ width:100%; padding:14px; font-size:17px; border:1px solid var(--line); border-radius:2px; background:#fffdf6; text-align:center; }
+  .type-input.correct{ border-color:var(--sage); background:#eef3ea; }
+  .type-input.wrong{ border-color:var(--brick); background:#fbe9e2; }
+  .feedback{ text-align:center; margin-top:10px; font-size:13px; }
+  .feedback.correct{ color:var(--sage); }
+  .feedback.wrong{ color:var(--brick); }
+
+  .session-summary{ text-align:center; padding:20px 0; }
+  .session-summary .big{ font-family:'Fraunces', serif; font-size:44px; font-weight:700; margin:6px 0; }
+
+  /* ---------- stats ---------- */
+  .stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:26px; }
+  .stat-box{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; }
+  .stat-box .n{ font-family:'Fraunces', serif; font-size:28px; font-weight:700; }
+  .stat-box .l{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--ink-soft); margin-top:2px; }
+  .cat-stat-row{ display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--line-soft); }
+  .cat-stat-row .dot{ width:9px; height:9px; border-radius:50%; flex:none; }
+  .cat-stat-row .name{ flex:1; font-size:14px; }
+  .box-bar{ display:flex; height:8px; width:140px; border-radius:4px; overflow:hidden; background:var(--line-soft); }
+  .box-bar div{ height:100%; }
+
+  @media (max-width:640px){
+    .shell{ padding:0 14px 40px; }
+    .brand h1{ font-size:21px; }
+    .card-grid{ grid-template-columns:1fr 1fr; }
+    .flash-card{ min-height:250px; }
+    .face .word{ font-size:22px; }
+  }
+  @media (max-width:420px){
+    .card-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- texts ---------- */
+  .text-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:14px; }
+  .tcard{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow-card); padding:16px; text-align:left; position:relative; cursor:pointer;
+  }
+  .tcard .top-row{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+  .tcard .topic-tag{ font-size:10px; padding:3px 8px; border-radius:100px; color:#fff; font-weight:600; letter-spacing:0.3px; }
+  .tcard h4{ margin:2px 0 6px; font-size:16.5px; font-family:'Fraunces',serif; }
+  .tcard p{ margin:0; font-size:12.5px; color:var(--ink-soft); line-height:1.4; }
+  .tcard .meta{ margin-top:10px; font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; }
+  .tcard .actions{ position:absolute; top:12px; right:12px; display:flex; gap:2px; opacity:0; transition:opacity .1s; }
+  .tcard:hover .actions{ opacity:1; }
+  .tcard .actions button{ background:none; border:none; font-size:13px; color:var(--ink-soft); padding:3px 5px; }
+  .tcard .actions button:hover{ color:var(--ink); }
+  .new-text-card{
+    border:1px dashed var(--line); background:transparent; border-radius:var(--radius);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    padding:24px; color:var(--ink-soft); font-size:13.5px; min-height:120px;
+  }
+  .new-text-card:hover{ color:var(--ink); border-color:var(--ink); }
+
+  .text-reading-wrap{ max-width:680px; margin:0 auto; }
+  .text-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; gap:10px; }
+  .text-header h2{ margin:0 0 4px; font-size:23px; }
+  .text-body{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    box-shadow:var(--shadow-card); padding:22px 24px; font-size:16px; line-height:1.75;
+    margin:16px 0 22px; user-select:text;
+  }
+  .text-body p{ margin:0 0 14px; }
+  .text-body p:last-child{ margin-bottom:0; }
+  #selection-popup{
+    position:absolute; z-index:60; transform:translate(-50%,-115%);
+    background:var(--ink); color:var(--paper); border-radius:100px; font-size:12.5px; font-weight:600;
+    padding:7px 14px; box-shadow:0 4px 14px rgba(0,0,0,0.25); cursor:pointer; white-space:nowrap;
+  }
+  #selection-popup:after{
+    content:''; position:absolute; bottom:-5px; left:50%; transform:translateX(-50%);
+    border:5px solid transparent; border-top-color:var(--ink);
+  }
+  .vocab-section{ margin-top:26px; }
+  .vocab-list{ display:flex; flex-direction:column; gap:8px; }
+  .vocab-item{
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:11px 14px;
+  }
+  .vocab-item .vt{ font-weight:600; font-size:14px; }
+  .vocab-item .vr{ font-size:12.5px; color:var(--ink-soft); }
+  .vocab-item .vn{ font-size:11.5px; color:var(--ink-soft); font-style:italic; margin-top:2px; }
+  .q-section{ margin-top:26px; }
+  .q-item{ margin-bottom:14px; }
+  .q-item .q-text{ font-size:14.5px; margin-bottom:6px; }
+  .q-item textarea{ width:100%; min-height:44px; }
+  .ai-feedback{
+    margin-top:12px; background:#fffdf6; border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; font-size:13.5px; line-height:1.55; white-space:pre-wrap;
+  }
+  .spin{
+    display:inline-block; width:12px; height:12px; border:2px solid rgba(255,255,255,0.4);
+    border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; margin-right:6px; vertical-align:-1px;
+  }
+  .spin.dark{ border-color:rgba(38,36,31,0.25); border-top-color:var(--ink); }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .ai-btn{ font-size:12px; padding:6px 10px; }
+  .topic-select-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+  .topic-opt{
+    border:1px solid var(--line); background:var(--card); border-radius:var(--radius); padding:10px 12px;
+    font-size:13px; text-align:left; cursor:pointer;
+  }
+  .topic-opt.active{ border-color:var(--ink); background:#fffdf6; font-weight:600; }
+  .gen-error{ color:var(--brick); font-size:12.5px; margin-top:8px; }
+
+  /* ---------- home / landing ---------- */
+  .home-btn{ opacity:0.55; font-size:12px; }
+  .home-btn:hover{ opacity:0.9; }
+  .home-hero{ max-width:560px; margin:18px 0 30px; }
+  .home-hero h2{ font-size:26px; margin:0 0 8px; }
+  .home-hero p{ margin:0; color:var(--ink-soft); font-size:14.5px; line-height:1.5; }
+  .home-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; max-width:720px; }
+  .home-tile{
+    text-align:left; border-radius:var(--radius); border:1px solid var(--line);
+    padding:28px 24px; box-shadow:var(--shadow-card); color:#fff; position:relative; overflow:hidden;
+    min-height:170px; display:flex; flex-direction:column; justify-content:flex-end;
+    transition:transform .12s ease;
+  }
+  .home-tile:hover{ transform:translateY(-2px); }
+  .home-tile.navy{ background:linear-gradient(155deg, var(--navy), var(--navy-2)); border-color:var(--navy); }
+  .home-tile.brick{ background:linear-gradient(155deg, var(--brick), #c15a3d); border-color:var(--brick); }
+  .home-tile .home-ico{ font-size:30px; margin-bottom:10px; opacity:0.9; }
+  .home-tile h3{ margin:0 0 4px; font-size:21px; }
+  .home-tile p{ margin:0; font-size:12.5px; opacity:0.85; }
+  @media (max-width:560px){
+    .home-grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <h1>Картотека слов</h1>
+      <span class="sub">личный словарь · интервальное повторение</span>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</header>
+<main>
+  <div class="shell" id="app"></div>
+</main>
+
+<script>
+/* ================= STATE & STORAGE ================= */
+let words = [];
+let categories = [];
+let texts = [];
+let appMode = 'home'; // 'home' | 'cards' | 'texts' — top-level: landing menu, dictionary side, or reading side
+let view = 'dictionary';
+let activeCategoryFilter = null;
+let modal = null; // {type:'word'|'category'|'text-gen', editId?, prefill?}
+let study = null; // session object
+let pendingDelete = null; // {kind:'word'|'category'|'text', id} - in-app confirm state (no window.confirm, sandboxed iframes block it)
+let practiceWarning = ''; // inline warning shown on the study menu instead of alert()
+
+let textView = 'list'; // 'list' | 'reading'
+let activeTextId = null;
+let selectionPopup = null; // {x,y,text,context}
+let genLoading = false;
+let genTopic = 'mixed';
+let genError = '';
+let translateLoading = false;
+let translateError = '';
+let checkLoading = false;
+let answerFeedback = '';
+
+const PALETTE = ['#a8452d','#5e7a56','#c69214','#3d4f6e','#7d5a8c','#3d7d7a','#8c5a3d','#5a6b8c'];
+const BOX_DAYS = [0,1,2,4,7,14];
+const TOPICS = [
+  {id:'daily', label:'Повседневная жизнь', color:'#5e7a56'},
+  {id:'work', label:'Работа и технологии', color:'#3d4f6e'},
+  {id:'travel', label:'Путешествия и культура', color:'#c69214'},
+  {id:'mixed', label:'Смешанная тема', color:'#a8452d'}
+];
+function topicMeta(id){ return TOPICS.find(t=>t.id===id) || TOPICS[3]; }
+
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+async function loadAll(){
+  try{
+    const w = await window.storage.get('words');
+    words = w ? JSON.parse(w.value) : [];
+  }catch(e){ words = []; }
+  try{
+    const c = await window.storage.get('categories');
+    categories = c ? JSON.parse(c.value) : [];
+  }catch(e){ categories = []; }
+  try{
+    const t = await window.storage.get('texts');
+    texts = t ? JSON.parse(t.value) : [];
+  }catch(e){ texts = []; }
+  render();
+}
+async function saveWords(){
+  try{ await window.storage.set('words', JSON.stringify(words)); }catch(e){ console.error('save words failed', e); }
+}
+async function saveCategories(){
+  try{ await window.storage.set('categories', JSON.stringify(categories)); }catch(e){ console.error('save categories failed', e); }
+}
+async function saveTexts(){
+  try{ await window.storage.set('texts', JSON.stringify(texts)); }catch(e){ console.error('save texts failed', e); }
+}
+
+/* ================= HELPERS ================= */
+function getCategory(id){ return categories.find(c=>c.id===id) || null; }
+function catColor(id){ const c=getCategory(id); return c ? c.color : '#9a9384'; }
+function catName(id){ const c=getCategory(id); return c ? c.name : 'Без категории'; }
+function catCode(id){
+  const c = getCategory(id);
+  if(!c) return 'БК';
+  return c.name.replace(/[^А-Яа-яA-Za-z]/g,'').slice(0,2).toUpperCase() || 'КТ';
+}
+function now(){ return Date.now(); }
+function isDue(w){ return w.nextReview<=now(); }
+function dueWords(){ return words.filter(isDue); }
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function fmtDate(ts){
+  const d = new Date(ts);
+  return d.toLocaleDateString('ru-RU', {day:'numeric', month:'short'});
+}
+function esc(s){
+  return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function updateBoxOnAnswer(w, correct){
+  w.timesReviewed = (w.timesReviewed||0)+1;
+  if(correct){
+    w.timesCorrect = (w.timesCorrect||0)+1;
+    w.box = Math.min((w.box||1)+1, 5);
+  } else {
+    w.box = 1;
+  }
+  w.nextReview = now() + BOX_DAYS[w.box]*86400000;
+  w.lastReviewed = now();
+}
+
+/* ================= RENDER ROOT ================= */
+function render(){
+  renderTabs();
+  const app = document.getElementById('app');
+  if(appMode==='home') app.innerHTML = renderHome();
+  else if(appMode==='cards'){
+    if(view==='dictionary') app.innerHTML = renderDictionary();
+    else if(view==='study') app.innerHTML = renderStudyMenu();
+    else if(view==='exercise') app.innerHTML = renderExercise();
+    else if(view==='stats') app.innerHTML = renderStats();
+  }
+  else if(appMode==='texts') app.innerHTML = renderTexts();
+  renderModal();
+  renderSelectionPopup();
+}
+function renderTabs(){
+  const tabsEl = document.getElementById('tabs');
+  if(appMode==='home'){ tabsEl.innerHTML=''; return; }
+  if(appMode==='cards'){
+    const tabs = [['dictionary','Словарь'],['study','Учить'],['stats','Статистика']];
+    tabsEl.innerHTML = `<button class="tab home-btn" data-action="go-home" title="Главное меню">⌂ Меню</button>` +
+      tabs.map(([id,label])=>
+        `<button class="tab ${view===id?'active':''}" data-action="nav" data-view="${id}">${label}</button>`
+      ).join('');
+  } else if(appMode==='texts'){
+    tabsEl.innerHTML = `<button class="tab home-btn" data-action="go-home" title="Главное меню">⌂ Меню</button>
+      <button class="tab active">Тексты</button>`;
+  }
+}
+
+/* ================= HOME / LANDING ================= */
+function renderHome(){
+  const due = dueWords().length;
+  return `
+    <div class="home-hero">
+      <h2>С чего начнём?</h2>
+      <p class="muted">Две независимые части: картотека слов с интервальным повторением и тексты для чтения, из которых можно сразу добавлять новую лексику.</p>
+    </div>
+    <div class="home-grid">
+      <button class="home-tile navy" data-action="enter-mode" data-mode="cards">
+        <div class="home-ico">📇</div>
+        <h3>Словарь</h3>
+        <p>${words.length} слов · ${categories.length} категорий${due?` · ${due} к повторению`:''}</p>
+      </button>
+      <button class="home-tile brick" data-action="enter-mode" data-mode="texts">
+        <div class="home-ico">📖</div>
+        <h3>Тексты</h3>
+        <p>${texts.length ? texts.length+' текстов для чтения' : 'Пока пусто — сгенерируй первый текст'}</p>
+      </button>
+    </div>
+  `;
+}
+
+/* ================= DICTIONARY VIEW ================= */
+function renderDictionary(){
+  const filtered = activeCategoryFilter===undefined ? words :
+    (activeCategoryFilter===null ? words : words.filter(w=> (w.categoryId||null)===activeCategoryFilter));
+  const list = activeCategoryFilter==='ALL'||activeCategoryFilter===null ? words :
+     words.filter(w => (w.categoryId||null) === activeCategoryFilter);
+
+  const chips = `
+    <div class="cat-rail">
+      <button class="cat-chip ${activeCategoryFilter===null?'active':''}" data-action="filter-cat" data-cat="null">
+        Все <span class="small muted">(${words.length})</span>
+      </button>
+      ${categories.map(c=>{
+        const n = words.filter(w=>w.categoryId===c.id).length;
+        return `<button class="cat-chip ${activeCategoryFilter===c.id?'active':''}" data-action="filter-cat" data-cat="${c.id}">
+          <span class="dot" style="background:${c.color}"></span>${esc(c.name)} <span class="small muted">(${n})</span>
+        </button>`;
+      }).join('')}
+      <button class="cat-chip" data-action="open-category-modal" style="border-style:dashed;">+ категория</button>
+    </div>`;
+
+  const grid = list.length === 0 ? `
+    <div class="empty">
+      <div class="display">Пока пусто</div>
+      <p>Добавьте первое слово из текста, который вы читаете, — так начнётся картотека.</p>
+      <div style="margin-top:14px;"><button class="btn navy" data-action="open-word-modal">+ Добавить слово</button></div>
+    </div>` : `
+    <div class="card-grid">
+      ${list.slice().sort((a,b)=>b.createdAt-a.createdAt).map(w=>renderWordCard(w)).join('')}
+    </div>`;
+
+  return `
+    <div class="section-head">
+      <div>
+        <h2>Словарь</h2>
+        <div class="count-badge">${words.length} слов · ${categories.length} категорий</div>
+      </div>
+      <button class="btn navy" data-action="open-word-modal">+ Добавить слово</button>
+    </div>
+    ${chips}
+    ${grid}
+  `;
+}
+
+function renderWordCard(w){
+  const idx = words.filter(x=>x.categoryId===w.categoryId).sort((a,b)=>a.createdAt-b.createdAt).findIndex(x=>x.id===w.id)+1;
+  const dots = [1,2,3,4,5].map(n=>{
+    let cls='';
+    if(n<=w.box) cls = w.box>=5 ? 'filled mastered' : 'filled';
+    return `<span class="${cls}"></span>`;
+  }).join('');
+  return `
+    <div class="wcard">
+      <div class="actions">
+        ${pendingDelete && pendingDelete.kind==='word' && pendingDelete.id===w.id
+          ? `<button data-action="confirm-delete-word" data-id="${w.id}" style="color:var(--brick);font-weight:700;">точно?</button>
+             <button data-action="cancel-delete" title="Отмена">↩</button>`
+          : `<button data-action="edit-word" data-id="${w.id}" title="Редактировать">✎</button>
+             <button data-action="ask-delete-word" data-id="${w.id}" title="Удалить">✕</button>`}
+      </div>
+      <div class="top-row">
+        <span class="call">${catCode(w.categoryId)}-${String(idx).padStart(3,'0')}</span>
+        <span class="cat-tab" style="background:${catColor(w.categoryId)}">${esc(catName(w.categoryId))}</span>
+      </div>
+      <div class="term">${esc(w.term)}</div>
+      <div class="translation">${esc(w.translation)}</div>
+      ${w.example ? `<div class="rule"></div><div class="example">${esc(w.example)}</div>` : ''}
+      <div class="bottom-row">
+        <div class="dots">${dots}</div>
+        ${isDue(w) ? `<span class="due-badge">к повторению</span>` : `<span class="small muted">до ${fmtDate(w.nextReview)}</span>`}
+      </div>
+    </div>
+  `;
+}
+
+/* ================= MODALS ================= */
+function renderModal(){
+  let host = document.getElementById('modal-host');
+  if(host) host.remove();
+  if(!modal) return;
+  const div = document.createElement('div');
+  div.id = 'modal-host';
+  if(modal.type==='word') div.innerHTML = wordModalHTML();
+  else if(modal.type==='category') div.innerHTML = categoryModalHTML();
+  else if(modal.type==='text-gen') div.innerHTML = textGenModalHTML();
+  document.body.appendChild(div);
+}
+function wordModalHTML(){
+  const editing = modal.editId ? words.find(w=>w.id===modal.editId) : null;
+  const pf = modal.prefill || {};
+  const termVal = editing ? editing.term : (pf.term||'');
+  const translationVal = editing ? editing.translation : (pf.translation||'');
+  const exampleVal = editing ? (editing.example||'') : (pf.example||pf.context||'');
+  const notesVal = editing ? (editing.notes||'') : (pf.notes||'');
+  const contextVal = pf.context || '';
+  const catOptions = categories.map(c=>`<option value="${c.id}" ${editing&&editing.categoryId===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
+  return `
+    <div class="overlay" data-action="close-modal">
+      <div class="modal">
+        <h3>${editing? 'Редактировать слово':'Новое слово'}</h3>
+        <form id="word-form">
+          <input type="hidden" id="f-context" value="${esc(contextVal)}">
+          <div class="field">
+            <label>Слово / термин</label>
+            <input type="text" id="f-term" value="${esc(termVal)}" required ${termVal?'':'autofocus'}>
+          </div>
+          <div class="field">
+            <label class="row between" style="align-items:center;">
+              <span>Перевод</span>
+              <button type="button" class="btn ghost ai-btn" id="ai-translate-btn" data-action="ai-translate">${translateLoading?'<span class="spin dark"></span>идёт перевод…':'🪄 перевести с ИИ'}</button>
+            </label>
+            <input type="text" id="f-translation" value="${esc(translationVal)}" required ${termVal?'autofocus':''}>
+            ${translateError ? `<div class="gen-error" style="margin-top:4px;">${esc(translateError)}</div>` : ''}
+          </div>
+          <div class="field">
+            <label>Категория</label>
+            <select id="f-category">
+              <option value="">Без категории</option>
+              ${catOptions}
+            </select>
+          </div>
+          <div class="field">
+            <label>Пример использования</label>
+            <textarea id="f-example">${esc(exampleVal)}</textarea>
+          </div>
+          <div class="field">
+            <label>Заметка (необязательно)</label>
+            <textarea id="f-notes">${esc(notesVal)}</textarea>
+          </div>
+          <div class="row" style="justify-content:flex-end; margin-top:6px;">
+            <button type="button" class="btn secondary" data-action="close-modal">Отмена</button>
+            <button type="submit" class="btn navy">${editing?'Сохранить':'Добавить'}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `;
+}
+function categoryModalHTML(){
+  return `
+    <div class="overlay" data-action="close-modal">
+      <div class="modal">
+        <h3>Новая категория</h3>
+        <form id="category-form">
+          <div class="field">
+            <label>Название</label>
+            <input type="text" id="f-cat-name" required autofocus placeholder="например, Фразовые глаголы">
+          </div>
+          <div class="row" style="justify-content:flex-end; margin-top:6px;">
+            <button type="button" class="btn secondary" data-action="close-modal">Отмена</button>
+            <button type="submit" class="btn navy">Создать</button>
+          </div>
+        </form>
+        ${categories.length? `<div style="margin-top:18px;border-top:1px solid var(--line-soft);padding-top:14px;">
+          <div class="small muted" style="margin-bottom:8px;">Существующие категории</div>
+          ${categories.map(c=>`
+            <div class="row between" style="padding:5px 0;">
+              <span class="row small"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block;margin-right:8px;"></span>${esc(c.name)}</span>
+              ${pendingDelete && pendingDelete.kind==='category' && pendingDelete.id===c.id
+                ? `<span class="row" style="gap:4px;">
+                     <button class="btn ghost small" style="color:var(--brick);font-weight:700;" data-action="confirm-delete-category" data-id="${c.id}">точно удалить?</button>
+                     <button class="btn ghost small" data-action="cancel-delete">отмена</button>
+                   </span>`
+                : `<button class="btn ghost small" data-action="ask-delete-category" data-id="${c.id}">удалить</button>`}
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function textGenModalHTML(){
+  return `
+    <div class="overlay" data-action="close-modal">
+      <div class="modal">
+        <h3>Новый текст</h3>
+        <p class="small muted" style="margin-top:-8px;margin-bottom:14px;">Текст уровня B1 с фразовыми глаголами, идиомами и полезной лексикой — сгенерирован специально для тебя.</p>
+        <div class="topic-select-grid">
+          ${TOPICS.map(t=>`<button type="button" class="topic-opt ${genTopic===t.id?'active':''}" data-action="pick-topic" data-topic="${t.id}">${esc(t.label)}</button>`).join('')}
+        </div>
+        ${genError ? `<div class="gen-error">${esc(genError)}</div>` : ''}
+        <div class="row" style="justify-content:flex-end; margin-top:10px;">
+          <button type="button" class="btn secondary" data-action="close-modal" ${genLoading?'disabled':''}>Отмена</button>
+          <button type="button" class="btn navy" data-action="generate-text" ${genLoading?'disabled':''}>
+            ${genLoading?'<span class="spin"></span>создаю текст…':'Сгенерировать'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ================= STUDY MENU ================= */
+function renderStudyMenu(){
+  const due = dueWords();
+  const banner = words.length===0 ? `
+    <div class="empty">
+      <div class="display">Ещё нечего учить</div>
+      <p>Сначала добавьте слова в словарь.</p>
+      <div style="margin-top:14px;"><button class="btn navy" data-action="nav" data-view="dictionary">Перейти в словарь</button></div>
+    </div>` : `
+    <div class="due-banner">
+      <div>
+        <div class="lbl">Повторение по расписанию</div>
+        <div class="n">${due.length}</div>
+        <div class="small" style="opacity:0.8;">${due.length===0?'слов к повторению — всё выучено на сегодня':'слов ждут повторения сегодня'}</div>
+      </div>
+      <button class="btn mustard" ${due.length===0?'disabled':''} data-action="start-review">Начать повторение</button>
+    </div>`;
+
+  if(words.length===0) return `<div class="section-head"><h2>Учить</h2></div>${banner}`;
+
+  const catFilterOptions = `<option value="">Все категории (${words.length})</option>` +
+    categories.map(c=>`<option value="${c.id}">${esc(c.name)} (${words.filter(w=>w.categoryId===c.id).length})</option>`).join('');
+
+  return `
+    <div class="section-head"><h2>Учить</h2></div>
+    ${banner}
+    <h3 style="margin-bottom:10px;font-size:16px;">Свободная тренировка</h3>
+    <div class="field" style="max-width:320px;">
+      <label>Категория</label>
+      <select id="practice-cat">${catFilterOptions}</select>
+    </div>
+    ${practiceWarning ? `<div class="small" style="color:var(--brick);margin-bottom:10px;">${esc(practiceWarning)}</div>` : ''}
+    <div class="mode-grid">
+      <button class="mode-card" data-action="start-practice" data-mode="flash">
+        <div class="ico">🗂️</div>
+        <h4>Флеш-карты</h4>
+        <p>Переворачивайте карточки и отмечайте, что вы помните.</p>
+      </button>
+      <button class="mode-card" data-action="start-practice" data-mode="quiz">
+        <div class="ico">☑️</div>
+        <h4>Тест с вариантами</h4>
+        <p>Выберите верный перевод из четырёх вариантов.</p>
+      </button>
+      <button class="mode-card" data-action="start-practice" data-mode="type">
+        <div class="ico">⌨️</div>
+        <h4>Написание</h4>
+        <p>Напишите перевод слова по памяти.</p>
+      </button>
+    </div>
+  `;
+}
+
+/* ================= EXERCISE SESSION ================= */
+function startSession(mode, pool, opts){
+  opts = opts || {};
+  if(pool.length===0) return;
+  if(mode==='quiz' && words.length<4){
+    practiceWarning = 'Для теста с вариантами нужно минимум 4 слова в словаре.';
+    render();
+    return;
+  }
+  practiceWarning = '';
+  study = {
+    mode: mode,
+    queue: shuffle(pool),
+    index: 0,
+    correct: 0,
+    wrong: 0,
+    wrongWords: [],
+    flipped: false,
+    checked: false,
+    lastCorrect: null,
+    isReview: !!opts.isReview,
+    typed: ''
+  };
+  view = 'exercise';
+  render();
+}
+
+function renderExercise(){
+  if(!study) { view='study'; return renderStudyMenu(); }
+  if(study.index >= study.queue.length){
+    return renderSessionSummary();
+  }
+  const w = study.queue[study.index];
+  const total = study.queue.length;
+  const header = `
+    <div class="exercise-wrap">
+      <div class="prog-label"><span>${study.index+1} из ${total}</span><span>${study.isReview?'Повторение':catName(w.categoryId)}</span></div>
+      <div class="progress-bar"><div class="fill" style="width:${(study.index/total)*100}%"></div></div>
+  `;
+  let body = '';
+  if(study.mode==='flash') body = renderFlashExercise(w);
+  else if(study.mode==='quiz') body = renderQuizExercise(w);
+  else if(study.mode==='type') body = renderTypeExercise(w);
+  return header + body + `</div>`;
+}
+
+function renderFlashExercise(w){
+  return `
+    <div class="flash-scene">
+      <div class="flash-card ${study.flipped?'flipped':''}" data-action="flip-card">
+        <div class="face front">
+          <span class="cat-tag" style="background:${catColor(w.categoryId)}">${esc(catName(w.categoryId))}</span>
+          <div class="word">${esc(w.term)}</div>
+          <div class="hint">нажмите, чтобы увидеть перевод</div>
+        </div>
+        <div class="face back">
+          <div class="trans">${esc(w.translation)}</div>
+          ${w.example?`<div class="ex">${esc(w.example)}</div>`:''}
+          ${w.notes?`<div class="notes">${esc(w.notes)}</div>`:''}
+        </div>
+      </div>
+    </div>
+    ${study.flipped ? `
+      <div class="answer-row">
+        <button class="btn brick" data-action="flash-answer" data-correct="0">Не помню</button>
+        <button class="btn sage" data-action="flash-answer" data-correct="1">Знаю</button>
+      </div>
+    ` : `
+      <div class="answer-row"><button class="btn navy" data-action="flip-card" style="flex:1;">Показать ответ</button></div>
+    `}
+  `;
+}
+
+function renderQuizExercise(w){
+  if(!study.options){
+    const others = words.filter(x=>x.id!==w.id);
+    const sameCat = others.filter(x=>x.categoryId===w.categoryId);
+    const pool = sameCat.length>=3 ? sameCat : others;
+    const distractors = shuffle(pool).slice(0,3).map(x=>x.translation);
+    study.options = shuffle([w.translation, ...distractors]);
+    study.checked = false;
+  }
+  return `
+    <div class="quiz-term">
+      <span class="cat-tag" style="background:${catColor(w.categoryId)};display:inline-block;padding:3px 9px;border-radius:100px;color:#fff;font-size:10px;font-weight:600;margin-bottom:10px;">${esc(catName(w.categoryId))}</span>
+      <div class="word">${esc(w.term)}</div>
+    </div>
+    <div class="quiz-options">
+      ${study.options.map(opt=>{
+        let cls='';
+        if(study.checked){
+          if(opt===w.translation) cls='correct';
+          else if(opt===study.picked && opt!==w.translation) cls='wrong';
+        }
+        return `<button class="opt-btn ${cls}" ${study.checked?'disabled':''} data-action="quiz-answer" data-opt="${esc(opt)}">${esc(opt)}</button>`;
+      }).join('')}
+    </div>
+    ${study.checked ? `<div style="text-align:center;margin-top:16px;"><button class="btn navy" data-action="next-card">Далее</button></div>` : ''}
+  `;
+}
+
+function renderTypeExercise(w){
+  const checked = study.checked;
+  const correct = study.lastCorrect;
+  return `
+    <div class="quiz-term">
+      <span class="cat-tag" style="background:${catColor(w.categoryId)};display:inline-block;padding:3px 9px;border-radius:100px;color:#fff;font-size:10px;font-weight:600;margin-bottom:10px;">${esc(catName(w.categoryId))}</span>
+      <div class="word">${esc(w.term)}</div>
+      <div class="small muted" style="margin-top:6px;">Напишите перевод</div>
+    </div>
+    <form id="type-form">
+      <input type="text" class="type-input ${checked?(correct?'correct':'wrong'):''}" id="type-input" value="${checked?esc(study.typed):''}" ${checked?'disabled':''} autocomplete="off" autofocus>
+      ${checked ? `<div class="feedback ${correct?'correct':'wrong'}">${correct? 'Верно!' : 'Правильный ответ: '+esc(w.translation)}</div>` : ''}
+      <div style="text-align:center;margin-top:16px;">
+        ${checked ? `<button type="button" class="btn navy" data-action="next-card">Далее</button>`
+                   : `<button type="submit" class="btn navy">Проверить</button>`}
+      </div>
+    </form>
+  `;
+}
+
+function renderSessionSummary(){
+  const total = study.correct+study.wrong;
+  return `
+    <div class="exercise-wrap">
+      <div class="session-summary">
+        <div class="small muted catnum">СЕССИЯ ЗАВЕРШЕНА</div>
+        <div class="big">${study.correct}/${total}</div>
+        <p class="muted">верных ответов ${study.isReview?'в повторении':'в тренировке'}</p>
+        <div class="row" style="justify-content:center; margin-top:20px;">
+          ${study.wrongWords.length>0 ? `<button class="btn brick" data-action="retry-wrong">Повторить ошибки (${study.wrongWords.length})</button>` : ''}
+          <button class="btn navy" data-action="finish-session">Готово</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ================= STATS VIEW ================= */
+function renderStats(){
+  const total = words.length;
+  const mastered = words.filter(w=>w.box>=5).length;
+  const due = dueWords().length;
+  const reviewed = words.filter(w=>w.timesReviewed>0).length;
+
+  const catRows = categories.map(c=>{
+    const catWords = words.filter(w=>w.categoryId===c.id);
+    if(catWords.length===0) return '';
+    const boxCounts = [1,2,3,4,5].map(n=>catWords.filter(w=>w.box===n).length);
+    const segs = boxCounts.map((n,i)=>{
+      if(n===0) return '';
+      const pct = (n/catWords.length*100).toFixed(1);
+      const color = i===4 ? 'var(--mustard)' : `rgba(44,58,84,${0.35+i*0.16})`;
+      return `<div style="width:${pct}%;background:${color}"></div>`;
+    }).join('');
+    return `
+      <div class="cat-stat-row">
+        <span class="dot" style="background:${c.color}"></span>
+        <span class="name">${esc(c.name)}</span>
+        <span class="small muted">${catWords.length}</span>
+        <div class="box-bar">${segs}</div>
+      </div>
+    `;
+  }).join('');
+
+  const noCat = words.filter(w=>!w.categoryId);
+  const noCatRow = noCat.length ? `
+    <div class="cat-stat-row">
+      <span class="dot" style="background:#9a9384"></span>
+      <span class="name">Без категории</span>
+      <span class="small muted">${noCat.length}</span>
+      <div class="box-bar"></div>
+    </div>` : '';
+
+  return `
+    <div class="section-head"><h2>Статистика</h2></div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="n">${total}</div><div class="l">всего слов</div></div>
+      <div class="stat-box"><div class="n">${mastered}</div><div class="l">освоено</div></div>
+      <div class="stat-box"><div class="n">${due}</div><div class="l">к повторению</div></div>
+      <div class="stat-box"><div class="n">${reviewed}</div><div class="l">хотя бы раз повторялись</div></div>
+    </div>
+    ${total>0 ? `<h3 style="font-size:16px;margin-bottom:4px;">По категориям</h3><div>${catRows}${noCatRow}</div>` : `
+      <div class="empty"><div class="display">Пока нет данных</div><p>Добавьте слова, чтобы увидеть статистику.</p></div>
+    `}
+  `;
+}
+
+/* ================= TEXTS VIEW ================= */
+function getActiveText(){ return texts.find(t=>t.id===activeTextId) || null; }
+
+function renderTexts(){
+  if(textView==='reading' && getActiveText()) return renderTextReading();
+  return renderTextList();
+}
+
+function renderTextList(){
+  const cards = texts.slice().sort((a,b)=>b.createdAt-a.createdAt).map(t=>{
+    const tm = topicMeta(t.topic);
+    return `
+      <div class="tcard" data-action="open-text" data-id="${t.id}">
+        <div class="actions">
+          ${pendingDelete && pendingDelete.kind==='text' && pendingDelete.id===t.id
+            ? `<button data-action="confirm-delete-text" data-id="${t.id}" style="color:var(--brick);font-weight:700;">точно?</button>
+               <button data-action="cancel-delete" title="Отмена">↩</button>`
+            : `<button data-action="ask-delete-text" data-id="${t.id}" title="Удалить">✕</button>`}
+        </div>
+        <div class="top-row">
+          <span class="topic-tag" style="background:${tm.color}">${esc(tm.label)}</span>
+        </div>
+        <h4>${esc(t.title)}</h4>
+        <p>${esc((t.content||'').slice(0,110))}${(t.content||'').length>110?'…':''}</p>
+        <div class="meta">${(t.vocabulary||[]).length} слов в разборе · ${fmtDate(t.createdAt)}</div>
+      </div>
+    `;
+  }).join('');
+
+  const newCard = `<button class="new-text-card" data-action="open-text-gen-modal">
+      <div style="font-size:22px;">+</div>
+      <div>Новый текст</div>
+    </button>`;
+
+  const body = texts.length===0 ? `
+    <div class="empty">
+      <div class="display">Пока нет текстов</div>
+      <p>Сгенерируй первый текст под свой уровень — выделяй в нём слова и сразу добавляй их в картотеку.</p>
+      <div style="margin-top:14px;"><button class="btn navy" data-action="open-text-gen-modal">+ Создать текст</button></div>
+    </div>` : `<div class="text-grid">${cards}${newCard}</div>`;
+
+  return `
+    <div class="section-head">
+      <div>
+        <h2>Тексты</h2>
+        <div class="count-badge">${texts.length} текстов</div>
+      </div>
+      ${texts.length>0 ? `<button class="btn navy" data-action="open-text-gen-modal">+ Новый текст</button>` : ''}
+    </div>
+    ${body}
+  `;
+}
+
+function renderTextReading(){
+  const t = getActiveText();
+  const tm = topicMeta(t.topic);
+  const paragraphs = (t.content||'').split(/\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('');
+  const vocab = (t.vocabulary||[]).map((v,i)=>`
+      <div class="vocab-item">
+        <div>
+          <div class="vt">${esc(v.phrase)}</div>
+          <div class="vr">${esc(v.translation_ru||v.translation||'')}</div>
+          ${v.note?`<div class="vn">${esc(v.note)}</div>`:''}
+        </div>
+        <button class="btn secondary ai-btn" data-action="quick-add-vocab" data-idx="${i}">+ в картотеку</button>
+      </div>
+  `).join('');
+  const questions = (t.questions||[]).map((q,i)=>`
+      <div class="q-item">
+        <div class="q-text"><b>${i+1}.</b> ${esc(q)}</div>
+        <textarea id="q-answer-${i}" placeholder="Твой ответ на английском…"></textarea>
+      </div>
+  `).join('');
+
+  return `
+    <div class="text-reading-wrap">
+      <div class="text-header">
+        <div>
+          <span class="topic-tag" style="background:${tm.color}">${esc(tm.label)}</span>
+          <h2>${esc(t.title)}</h2>
+        </div>
+        <button class="btn secondary" data-action="back-to-texts">← к списку</button>
+      </div>
+      <div class="small muted">Выдели любое слово или фразу в тексте, чтобы сразу добавить их в картотеку.</div>
+      <div class="text-body" id="text-body">${paragraphs}</div>
+
+      ${vocab ? `<div class="vocab-section">
+        <h3 style="font-size:16px;margin-bottom:10px;">Разбор лексики</h3>
+        <div class="vocab-list">${vocab}</div>
+      </div>` : ''}
+
+      ${questions ? `<div class="q-section">
+        <h3 style="font-size:16px;margin-bottom:10px;">Вопросы на понимание</h3>
+        ${questions}
+        <button class="btn navy" data-action="check-answers" ${checkLoading?'disabled':''}>${checkLoading?'<span class="spin"></span>проверяю…':'Проверить ответы с ИИ'}</button>
+        ${answerFeedback ? `<div class="ai-feedback">${esc(answerFeedback)}</div>` : ''}
+      </div>` : ''}
+    </div>
+  `;
+}
+
+function renderSelectionPopup(){
+  let host = document.getElementById('selection-popup');
+  if(host) host.remove();
+  if(!selectionPopup) return;
+  const div = document.createElement('div');
+  div.id = 'selection-popup';
+  div.style.left = selectionPopup.x + 'px';
+  div.style.top = selectionPopup.y + 'px';
+  div.setAttribute('data-action','add-selection-to-dict');
+  div.textContent = '+ добавить в картотеку';
+  document.body.appendChild(div);
+}
+
+function getContextSentence(selText, fullText){
+  if(!fullText) return '';
+  const idx = fullText.indexOf(selText);
+  if(idx===-1) return '';
+  let start = fullText.lastIndexOf('.', idx);
+  start = start===-1 ? 0 : start+1;
+  let end = fullText.indexOf('.', idx+selText.length);
+  end = end===-1 ? fullText.length : end+1;
+  return fullText.slice(start,end).trim();
+}
+
+/* ================= AI CALLS ================= */
+async function callClaude(system, userPrompt, maxTokens){
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens: maxTokens || 1000,
+      system: system,
+      messages:[{ role:'user', content: userPrompt }]
+    })
+  });
+  const rawBody = await response.text();
+  let data;
+  try{ data = JSON.parse(rawBody); }
+  catch(e){
+    const snippet = (rawBody||'').slice(0,180).replace(/\s+/g,' ').trim();
+    throw new Error('Сервер вернул не-JSON (' + response.status + '): ' + (snippet || 'пустой ответ'));
+  }
+  if(data && data.error){ throw new Error(data.error.message || 'Ошибка API'); }
+  if(!response.ok){ throw new Error('Ошибка запроса: ' + response.status + (data && data.type ? ' ('+data.type+')' : '')); }
+  const text = (data.content||[]).map(b=>b.text||'').join('');
+  if(!text) throw new Error('Модель вернула пустой ответ. Сырые данные: ' + JSON.stringify(data).slice(0,180));
+  return text;
+}
+function parseJsonLoose(raw){
+  let clean = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+  const start = clean.indexOf('{');
+  const end = clean.lastIndexOf('}');
+  if(start!==-1 && end!==-1 && end>start){
+    clean = clean.slice(start, end+1);
+  }
+  try{
+    return JSON.parse(clean);
+  }catch(e){
+    throw new Error('Не удалось разобрать ответ модели как JSON');
+  }
+}
+
+async function generateText(){
+  genLoading = true; genError=''; render();
+  try{
+    const tm = topicMeta(genTopic);
+    const system = "Ты помогаешь русскоязычному человеку с уровнем английского B1 вернуть язык в активное состояние (пассивный английский из-за 4 лет жизни в немецкоязычной среде). Отвечай ТОЛЬКО валидным JSON, без markdown и комментариев.";
+    const prompt = `Напиши короткий текст на английском языке (150-220 слов) уровня B1 на тему: "${tm.label}". Естественно включи 8-12 полезных фразовых глаголов, идиом и повседневных слов, которые пригодятся для активного словарного запаса. Раздели текст на 2-3 абзаца.
+
+Ответь СТРОГО одним валидным JSON-объектом, без markdown, без пояснений, без литеральных переносов строк внутри значений (внутри "text" абзацы раздели строкой " || ", я сам заменю её на переносы). Формат:
+{"title": "название на английском", "text": "абзац 1 || абзац 2 || абзац 3", "vocabulary": [{"phrase": "фразовый глагол/идиома/слово", "translation_ru": "короткий перевод по-русски", "note": "краткая заметка по-русски, необязательно"}], "questions": ["вопрос на английском 1", "вопрос 2", "вопрос 3"]}`;
+    const raw = await callClaude(system, prompt, 1800);
+    const parsed = parseJsonLoose(raw);
+    const textObj = {
+      id: uid(),
+      title: parsed.title || 'Untitled',
+      topic: genTopic,
+      content: (parsed.text || '').split('||').map(p=>p.trim()).filter(Boolean).join('\n\n'),
+      vocabulary: parsed.vocabulary || [],
+      questions: parsed.questions || [],
+      createdAt: now()
+    };
+    texts.push(textObj);
+    await saveTexts();
+    activeTextId = textObj.id;
+    textView = 'reading';
+    modal = null;
+    answerFeedback = '';
+  }catch(err){
+    console.error('generate text failed', err);
+    genError = 'Не получилось создать текст: ' + (err && err.message ? err.message : 'неизвестная ошибка');
+  }
+  genLoading = false;
+  render();
+}
+
+async function aiTranslate(){
+  const termInput = document.getElementById('f-term');
+  const contextInput = document.getElementById('f-context');
+  const term = termInput ? termInput.value.trim() : '';
+  if(!term) return;
+  translateLoading = true; translateError=''; render();
+  try{
+    const context = contextInput ? contextInput.value.trim() : '';
+    const system = "Ты помогаешь с переводом английской лексики для русскоязычного ученика уровня B1. Отвечай ТОЛЬКО валидным JSON.";
+    const prompt = `Слово или фраза: "${term}".${context? ` Контекст (предложение из текста): "${context}".` : ''} Верни JSON строго такой формы: {"translation_ru": "краткий перевод по-русски", "example_en": "пример предложения на английском", "note_ru": "короткая заметка/пояснение по-русски, необязательно"}`;
+    const raw = await callClaude(system, prompt, 400);
+    const parsed = parseJsonLoose(raw);
+    const trInput = document.getElementById('f-translation');
+    const exInput = document.getElementById('f-example');
+    const noInput = document.getElementById('f-notes');
+    if(trInput && parsed.translation_ru) trInput.value = parsed.translation_ru;
+    if(exInput && parsed.example_en && !exInput.value.trim()) exInput.value = parsed.example_en;
+    if(noInput && parsed.note_ru && !noInput.value.trim()) noInput.value = parsed.note_ru;
+  }catch(err){
+    console.error('ai translate failed', err);
+    translateError = err && err.message ? err.message : 'Не удалось перевести';
+  }
+  translateLoading = false;
+  render();
+}
+
+async function checkAnswers(){
+  const t = getActiveText();
+  if(!t || !t.questions || t.questions.length===0) return;
+  const answers = t.questions.map((q,i)=>{
+    const el = document.getElementById('q-answer-'+i);
+    return { q, a: el ? el.value.trim() : '' };
+  });
+  checkLoading = true; render();
+  try{
+    const system = "Ты доброжелательный преподаватель английского для русскоязычного ученика уровня B1. Давай краткую обратную связь по-русски: отметь ошибки грамматики и лексики мягко, предложи улучшенный вариант фразы, если нужно. Отвечай простым текстом, без markdown-разметки, по-русски.";
+    const prompt = `Текст для чтения:\n${t.content}\n\nВопросы и ответы ученика:\n${answers.map((x,i)=>`${i+1}. ${x.q}\nОтвет: ${x.a||'(пусто)'}`).join('\n\n')}\n\nДай короткую обратную связь по каждому ответу (2-3 предложения на ответ).`;
+    const raw = await callClaude(system, prompt, 800);
+    answerFeedback = raw.trim();
+  }catch(err){
+    console.error('check answers failed', err);
+    answerFeedback = 'Не получилось проверить ответы. Попробуй ещё раз.';
+  }
+  checkLoading = false;
+  render();
+}
+
+/* ================= EVENT HANDLING ================= */
+document.addEventListener('click', async (e)=>{
+  const t = e.target.closest('[data-action]');
+  if(!t) return;
+  const action = t.dataset.action;
+
+  if(action==='nav'){ view = t.dataset.view; study=null; pendingDelete=null; practiceWarning=''; selectionPopup=null; render(); }
+  else if(action==='go-home'){
+    appMode='home'; study=null; pendingDelete=null; practiceWarning=''; selectionPopup=null; modal=null; render();
+  }
+  else if(action==='enter-mode'){
+    appMode = t.dataset.mode;
+    if(appMode==='cards'){ view='dictionary'; activeCategoryFilter=null; }
+    else if(appMode==='texts'){ textView='list'; activeTextId=null; answerFeedback=''; }
+    render();
+  }
+  else if(action==='filter-cat'){
+    activeCategoryFilter = t.dataset.cat==='null' ? null : t.dataset.cat;
+    render();
+  }
+  else if(action==='open-word-modal'){ translateError=''; modal = {type:'word'}; render(); }
+  else if(action==='open-category-modal'){ modal = {type:'category'}; render(); }
+  else if(action==='close-modal'){
+    if(e.target !== t) return; // only close when the click landed on the backdrop itself
+    modal = null; translateError=''; render();
+  }
+  else if(action==='edit-word'){ translateError=''; modal = {type:'word', editId:t.dataset.id}; render(); }
+  else if(action==='ask-delete-word'){ pendingDelete = {kind:'word', id:t.dataset.id}; render(); }
+  else if(action==='ask-delete-category'){ pendingDelete = {kind:'category', id:t.dataset.id}; render(); }
+  else if(action==='cancel-delete'){ pendingDelete = null; render(); }
+  else if(action==='confirm-delete-word'){
+    words = words.filter(w=>w.id!==t.dataset.id);
+    pendingDelete = null;
+    await saveWords(); render();
+  }
+  else if(action==='confirm-delete-category'){
+    const id = t.dataset.id;
+    categories = categories.filter(c=>c.id!==id);
+    words.forEach(w=>{ if(w.categoryId===id) w.categoryId=null; });
+    if(activeCategoryFilter===id) activeCategoryFilter=null;
+    pendingDelete = null;
+    await saveCategories(); await saveWords(); render();
+  }
+  else if(action==='start-review'){
+    startSession('flash', dueWords(), {isReview:true});
+  }
+  else if(action==='start-practice'){
+    const mode = t.dataset.mode;
+    const catSel = document.getElementById('practice-cat');
+    const catVal = catSel ? catSel.value : '';
+    const pool = catVal ? words.filter(w=>w.categoryId===catVal) : words.slice();
+    startSession(mode, pool, {isReview:false});
+  }
+  else if(action==='flip-card'){ study.flipped = !study.flipped; render(); }
+  else if(action==='flash-answer'){
+    const correct = t.dataset.correct==='1';
+    handleAnswer(correct);
+  }
+  else if(action==='quiz-answer'){
+    if(study.checked) return;
+    const w = study.queue[study.index];
+    const opt = t.dataset.opt;
+    study.picked = opt;
+    study.checked = true;
+    const correct = opt===w.translation;
+    study.lastCorrect = correct;
+    registerAnswer(w, correct);
+  }
+  else if(action==='next-card'){ advanceCard(); }
+  else if(action==='retry-wrong'){
+    const pool = study.wrongWords.slice();
+    startSession(study.mode, pool, {isReview:study.isReview});
+  }
+  else if(action==='finish-session'){ study=null; view='study'; render(); }
+  else if(action==='open-text-gen-modal'){ genError=''; modal = {type:'text-gen'}; render(); }
+  else if(action==='pick-topic'){ genTopic = t.dataset.topic; render(); }
+  else if(action==='generate-text'){ generateText(); }
+  else if(action==='open-text'){
+    activeTextId = t.dataset.id; textView='reading'; answerFeedback=''; selectionPopup=null; render();
+  }
+  else if(action==='back-to-texts'){ textView='list'; activeTextId=null; selectionPopup=null; answerFeedback=''; render(); }
+  else if(action==='ask-delete-text'){ e.stopPropagation(); pendingDelete = {kind:'text', id:t.dataset.id}; render(); }
+  else if(action==='confirm-delete-text'){
+    e.stopPropagation();
+    texts = texts.filter(x=>x.id!==t.dataset.id);
+    pendingDelete = null;
+    await saveTexts(); render();
+  }
+  else if(action==='quick-add-vocab'){
+    const tx = getActiveText();
+    const v = tx.vocabulary[parseInt(t.dataset.idx,10)];
+    if(!v) return;
+    translateError='';
+    modal = { type:'word', prefill:{
+      term: v.phrase,
+      translation: v.translation_ru || v.translation || '',
+      context: getContextSentence(v.phrase, tx.content) || v.note || '',
+      notes: v.note || ''
+    }};
+    render();
+  }
+  else if(action==='add-selection-to-dict'){
+    if(!selectionPopup) return;
+    translateError='';
+    modal = { type:'word', prefill:{ term: selectionPopup.text, context: selectionPopup.context } };
+    selectionPopup = null;
+    render();
+  }
+  else if(action==='ai-translate'){ aiTranslate(); }
+  else if(action==='check-answers'){ checkAnswers(); }
+});
+
+document.addEventListener('submit', async (e)=>{
+  if(e.target.id==='word-form'){
+    e.preventDefault();
+    const term = document.getElementById('f-term').value.trim();
+    const translation = document.getElementById('f-translation').value.trim();
+    const categoryId = document.getElementById('f-category').value || null;
+    const example = document.getElementById('f-example').value.trim();
+    const notes = document.getElementById('f-notes').value.trim();
+    if(!term || !translation) return;
+    if(modal.editId){
+      const w = words.find(x=>x.id===modal.editId);
+      Object.assign(w, {term, translation, categoryId, example, notes});
+    } else {
+      words.push({
+        id: uid(), term, translation, categoryId, example, notes,
+        box:1, nextReview: now(), createdAt: now(), timesReviewed:0, timesCorrect:0
+      });
+    }
+    await saveWords();
+    modal = null;
+    render();
+  }
+  else if(e.target.id==='category-form'){
+    e.preventDefault();
+    const name = document.getElementById('f-cat-name').value.trim();
+    if(!name) return;
+    categories.push({ id: uid(), name, color: PALETTE[categories.length % PALETTE.length] });
+    await saveCategories();
+    document.getElementById('f-cat-name').value='';
+    render();
+  }
+  else if(e.target.id==='type-form'){
+    e.preventDefault();
+    if(study.checked) return;
+    const input = document.getElementById('type-input');
+    const val = input.value.trim();
+    const w = study.queue[study.index];
+    const correct = val.toLowerCase() === w.translation.trim().toLowerCase();
+    study.typed = val;
+    study.checked = true;
+    study.lastCorrect = correct;
+    registerAnswer(w, correct);
+  }
+});
+
+document.addEventListener('mouseup', (e)=>{
+  if(e.target.closest('#selection-popup')) return; // let the click handler process the popup itself
+  const body = document.getElementById('text-body');
+  if(!body){ if(selectionPopup){ selectionPopup=null; renderSelectionPopup(); } return; }
+  const sel = window.getSelection();
+  const text = sel && sel.toString().trim();
+  if(text && text.length>0 && text.length<80 && body.contains(sel.anchorNode) && body.contains(sel.focusNode)){
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    const tx = getActiveText();
+    selectionPopup = {
+      text,
+      x: rect.left + rect.width/2 + window.scrollX,
+      y: rect.top + window.scrollY,
+      context: tx ? getContextSentence(text, tx.content) : ''
+    };
+  } else if(!body.contains(e.target)) {
+    selectionPopup = null;
+  }
+  renderSelectionPopup();
+});
+
+function handleAnswer(correct){
+  const w = study.queue[study.index];
+  registerAnswer(w, correct);
+  advanceCard();
+}
+function registerAnswer(w, correct){
+  updateBoxOnAnswer(w, correct);
+  if(correct) study.correct++; else { study.wrong++; study.wrongWords.push(w); }
+  saveWords();
+}
+function advanceCard(){
+  study.index++;
+  study.flipped = false;
+  study.checked = false;
+  study.options = null;
+  study.picked = null;
+  study.typed = '';
+  render();
+}
+
+/* ================= INIT ================= */
+loadAll();
+</script>
+</body>
+</html>
